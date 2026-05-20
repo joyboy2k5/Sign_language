@@ -15,3 +15,10 @@ Follow these simple steps in your terminal to get the project running locally on
 1. **Clone the repository:**
    ```bash
    git clone [https://github.com/joyboy2k5/Sign_language.git](https://github.com/joyboy2k5/Sign_language.git)
+## HOW TO RUN 
+**Go inside the project folder:**
+   1)in terminal:-
+   cd Sign_language
+   2)run:-npm install
+   3)run:-npm run dev
+   4)click on link
