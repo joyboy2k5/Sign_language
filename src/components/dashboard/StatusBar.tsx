@@ -4,6 +4,8 @@ interface StatusBarProps {
   cameraState: string;
   fps: number;
   bufferLength: number;
+  activeEngine?: "websocket" | "browser";
+  handsDetected?: number;
 }
 
 function Pill({
@@ -24,12 +26,12 @@ function Pill({
           ? "bg-red-500"
           : "bg-zinc-500";
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         {label}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-widest text-foreground">
+      <span className="font-mono text-[10px] uppercase tracking-widest text-foreground font-medium">
         {value}
       </span>
     </div>
@@ -42,23 +44,29 @@ export function StatusBar({
   cameraState,
   fps,
   bufferLength,
+  activeEngine = "browser",
+  handsDetected = 0,
 }: StatusBarProps) {
   return (
-    <footer className="flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-border bg-sidebar px-4 py-2">
+    <footer className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-border bg-sidebar px-4 py-2">
       <Pill
-        label="db connection:"
+        label="db:"
         value={dbConnected ? "connected" : "offline"}
         tone={dbConnected ? "ok" : "err"}
       />
       <Pill
-        label="ml engine:"
-        value={mlState}
+        label="engine:"
+        value={activeEngine === "websocket" ? `ws.backend [${mlState}]` : `browser.ai [${mlState}]`}
         tone={
-          mlState === "streaming" ? "ok" : mlState === "idle" ? "warn" : "muted"
+          mlState === "streaming" || mlState === "tracking"
+            ? "ok"
+            : mlState === "idle"
+              ? "warn"
+              : "muted"
         }
       />
       <Pill
-        label="camera status:"
+        label="camera:"
         value={cameraState}
         tone={
           cameraState === "active"
@@ -68,9 +76,14 @@ export function StatusBar({
               : "muted"
         }
       />
+      <Pill
+        label="hands:"
+        value={`${handsDetected} tracked`}
+        tone={handsDetected > 0 ? "ok" : "muted"}
+      />
       <div className="ml-auto flex items-center gap-4">
         <Pill label="fps:" value={fps.toFixed(1)} tone="muted" />
-        <Pill label="buf:" value={`${bufferLength}c`} tone="muted" />
+        <Pill label="buf:" value={`${bufferLength} chars`} tone="muted" />
       </div>
     </footer>
   );
